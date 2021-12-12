@@ -37,7 +37,7 @@ def tokenizer(data, num):
     unknown_str = "<ukn>"
     mapper = tf.keras.preprocessing.text.Tokenizer(num_words=num, filters="", oov_token=unknown_str)
     mapper.fit_on_texts(data)
-    data = tokenizer.texts_to_sequences(data)
+    data = mapper.texts_to_sequences(data)
     data = tf.keras.preprocessing.sequence.pad_sequences(data, padding='post')
     return data, mapper
     
@@ -56,6 +56,15 @@ def prepare_text(text1, text2):
         ctext2.append(se_token)
     
     return ctext1, ctext2
+
+def remove_sentences_with_unknown_tokens(sp_data, en_data, sp_tokenizer, en_tokenizer):
+    unknown_token = "<ukn>"
+    sp_unknown_index = sp_tokenizer.word_index[unknown_token]
+    en_unknown_index = en_tokenizer.word_index[unknown_token]
+    sp_has_unknown = tf.reduce_any(tf.math.equal(sp_data, sp_unknown_index), axis=1)
+    en_has_unknown = tf.reduce_any(tf.math.equal(en_data, en_unknown_index), axis=1)
+    all_words_known = tf.logical_not(tf.logical_or(sp_has_unknown, en_has_unknown))
+    return sp_data[all_words_known], en_data[all_words_known] 
 
 
 
