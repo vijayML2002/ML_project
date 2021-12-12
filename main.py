@@ -1,5 +1,6 @@
 from utils import get_raw_data, tokenizer
-from utils import prepare_text, remove_sentences_with_unknown_tokens
+from utils import prepare_text
+from utils import remove_sentences_with_unknown_tokens
 
 path = "./spa.txt"
 
