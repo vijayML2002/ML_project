@@ -1,8 +1,8 @@
-import os
+import tensorflow as tf
 import unicodedata
+import os
 import re
 
-path = "./spa.txt"
 
 def get_raw_data(path):
     english_sentence = []
@@ -33,9 +33,32 @@ def add_token(text):
     text = "{} {} {}".format(start_token, text, end_token)
     return text
 
-def tokenizer():
-    pass
+def tokenizer(data, num):
+    unknown_str = "<ukn>"
+    mapper = tf.keras.preprocessing.text.Tokenizer(num_words=num, filters="", oov_token=unknown_str)
+    mapper.fit_on_texts(data)
+    data = tokenizer.texts_to_sequences(data)
+    data = tf.keras.preprocessing.sequence.pad_sequences(data, padding='post')
+    return data, mapper
+    
+def prepare_text(text1, text2):
+    ctext1 = []
+    ctext2 = []
 
-sp, en = get_raw_data(path)
+    for sentence in text1:
+        clean_sentence = clean_text(sentence)
+        se_token = add_token(clean_sentence)
+        ctext1.append(se_token)
+        
+    for sentence in text2:
+        clean_sentence = clean_text(sentence)
+        se_token = add_token(clean_sentence)
+        ctext2.append(se_token)
+    
+    return ctext1, ctext2
+
+
+
+
 
 
